@@ -4,8 +4,8 @@ These scripts are only intended to run on Raspberry Pi Pico/ Raspberry Pi Pico 2
 
 ## Getting Started
 These scripts require two libraries from the [circuitpython library bundle](https://github.com/adafruit/Adafruit_CircuitPython_Bundle/releases/download/20260718/adafruit-circuitpython-bundle-10.x-mpy-20260718.zip):
-    - adafruit_pioasm
-    - adafruit_motor
+- adafruit_pioasm
+- adafruit_motor
 
 Copy each of these libraries to your `CIRCUITPY/lib` folder.
 

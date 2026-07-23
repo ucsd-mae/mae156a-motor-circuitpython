@@ -26,6 +26,7 @@
 *.mpy
 *.uf2
 */examples
+circuitpython */
 
 # Python-specific files
 __pycache__

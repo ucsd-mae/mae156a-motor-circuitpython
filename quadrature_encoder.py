@@ -15,12 +15,11 @@ Wiring: connect encoder phase A to `pin_a`, phase B to the *next* GPIO
 (IN PINS reads two consecutive pins in one shot) -- it is not adjustable
 in software.
 
-Requires: adafruit_pioasm, rp2pio (both built into CircuitPython / bundled
-library -- adafruit_pioasm is a bundle library, rp2pio is a built-in module).
+Requires: adafruit_pioasm, rp2pio 
+-- adafruit_pioasm is a bundle library, rp2pio is a built-in module
 """
 
 import array
-
 import adafruit_pioasm
 import rp2pio
 

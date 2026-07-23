@@ -9,4 +9,4 @@ These scripts require two libraries from the [circuitpython library bundle](http
 
 Copy each of these libraries to your `CIRCUITPY/lib` folder.
 
-Additionally, the quadrature_encoder.py file contains the QuadratureEncoder class used to read a quadrature encoder via PIO on RP2040/RP2350 boards. The quadrature_encoder.py file should always be placed on the CIRCUITPY drive
+Additionally, the `quadrature_encoder.py` file contains the QuadratureEncoder class used to read a quadrature encoder via PIO on RP2040/RP2350 boards. The quadrature_encoder.py file should always be placed on the CIRCUITPY drive

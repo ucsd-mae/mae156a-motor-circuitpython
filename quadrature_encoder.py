@@ -16,7 +16,7 @@ Wiring: connect encoder phase A to `pin_a`, phase B to the *next* GPIO
 in software.
 
 Requires: adafruit_pioasm, rp2pio 
--- adafruit_pioasm is a bundle library, rp2pio is a built-in module
+-- adafruit_pioasm is a bundle library, rp2pio is a built-in module).
 """
 
 import array
@@ -63,7 +63,7 @@ decrement:
 
 .wrap_target
 update:
-    mov isr, y      ; move 
+    mov isr, y      ; move current value of scratch register, y, to ISR, transferring encoder count to be pushed to FIFO
     push noblock    ; push the ISR into the FIFO, even if FIFO is full
 
 sample_pins:

@@ -10,7 +10,7 @@ import digitalio
 motor_cpr = int(48) # 48 counts per revolution
 encoder_pinA = board.GP16
 encoder_pinB = board.GP17 
-loop_rate = 1000
+loop_rate = 10
 sleep_seconds = 1/loop_rate # only compute this once
 filter_alpha = 0.1
 
@@ -55,10 +55,10 @@ while True:
         # update previous encoder state with new state
         encoder_state_prev = encoder_state_new
 
-        # only update user at specified sample rate
+        # get current time
         new_time = time.monotonic()
     
-        if (new_time - last_time) > sleep_seconds:
+        if True:
             delta_count = encoder_count - encoder_count_prev
             delta_time =  new_time - last_time 
             rpm = delta_count / motor_cpr / delta_time * 60
@@ -72,4 +72,4 @@ while True:
 #                                                                filtered_rpm))
             encoder_count_prev = encoder_count
             last_time = new_time
-
+        time.sleep(sleep_seconds) # enforce the loop rate from constants

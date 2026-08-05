@@ -57,7 +57,8 @@ def parse_user_input(input_string):
     try:
         command = input_string.lower()
         if command in ["off", "stop", "0"]:
-            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both outputs on: which shorts them on motor driver
+            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both 
+                        # outputs on: which shorts them on motor driver
         elif command in ["coast", None]:
             return None # sets motor to coast
         else:
@@ -67,7 +68,8 @@ def parse_user_input(input_string):
             return result
 
     except:
-        print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*".format(input_string))
+        print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*"\
+              .format(input_string))
         return None
 
 

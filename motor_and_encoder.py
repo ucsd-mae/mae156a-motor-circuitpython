@@ -55,7 +55,8 @@ def parse_user_input(input_string):
             return result
 
     except:
-        print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*".format(input_string))
+        print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*"\
+              .format(input_string))
         return None
 
 

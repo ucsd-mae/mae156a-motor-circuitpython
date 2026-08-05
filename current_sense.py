@@ -27,7 +27,8 @@ motor1_pwmA = board.GP8
 motor1_pwmB = board.GP9
 
 # current sense
-adc_pin = analogio.AnalogIn(board.GP26)
+adc_pin_1 = analogio.AnalogIn(board.GP26)
+adc_pin_2 = analogio.AnalogIn(board.GP27)
 resistor_value = 1.8 # ohms
 
 # set pins as PWM outputs
@@ -36,11 +37,11 @@ M1B = pwmio.PWMOut(motor1_pwmB, frequency=10000) # this pin is used to set PWM s
 # create motor object with PWM objects
 motor1 = motor.DCMotor(M1A, M1B)
 
-def measure_current(adc_pin, resistor_value):
+def measure_current(adc_pin_1, adc_pin_2, resistor_value):
     # note, the pico ADC is only 12 bit (4096 discrete values), 
     # but circuitpython scales value to 16 bit because 16 bit is defacto resolution of boards in 
     # circuitpython/micropython, similar to how 8 bit is defacto resolution in arduino
-    return adc_pin.value * (adc_pin.reference_voltage / 65535) / resistor_value
+    return 2 * (adc_pin_1.value - adc_pin_2.value) * (adc_pin_1.reference_voltage / 65535) / resistor_value
 
 def rolling_ema_filter(alpha, raw_val, filtered_val):
     # simple filter: https://en.wikipedia.org/wiki/Exponential_smoothing
@@ -53,18 +54,18 @@ def parse_user_input(input_string):
     stop                 - sets motor driver to off, with braking (motor terminals shorted)
     coast                - sets motor driver to off, no braking   (motor terminals open)
     """ 
-    split_string = input_string.split()
     try:
-        command = split_string[0].lower()
-        if command == "throttle":
-            result = float(split_string[1])
+        command = input_string.lower()
+        if command in ["off", "stop", "0"]:
+            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both outputs on: which shorts them on motor driver
+        elif command in ["coast", None]:
+            return None # sets motor to coast
+        else:
+            result = float(input_string)
             if result >  1.0: result =  1.0
             if result < -1.0: result = -1.0
             return result
-        elif command in ["off", "stop", "0"]:
-            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both outputs on: which shorts them on motor driver
-        else: # implicitly handle coast case
-            return None # adafruit_motor.Motor class handles a throttle value of None as both outputs off.
+
     except:
         print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*".format(input_string))
         return None
@@ -86,11 +87,11 @@ while True:
     delta_time = new_time - last_time 
     rpm = delta_count / motor_cpr / delta_time * 60e9
     filtered_rpm = rolling_ema_filter(filter_alpha, rpm, filtered_rpm)
-    current = measure_current(adc_pin, resistor_value)
+    current = measure_current(adc_pin_1, adc_pin_2, resistor_value)
     filtered_current = rolling_ema_filter(filter_alpha, current, filtered_current)
 
     if new_value != last_value:
-        print("systime {:5.5f}, throttle {:s}, encoder count {:8d}, delta encoder {:3d}, delta t(s) {:1.7f}, raw rpm {:4.0f}, filtered rpm {:4.0f}, current: {:1.3f}"\
+        print("systime {:5.5f}, throttle {:s}, encoder count {:8d}, delta encoder {:3d}, delta t(s) {:1.7f}, raw rpm {:4.0f}, filtered rpm {:4.0f}, filtered current {:1.3f}"\
               .format(time.monotonic(),
                         str(motor1.throttle),
                         new_value, 

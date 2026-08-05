@@ -42,18 +42,18 @@ def parse_user_input(input_string):
     stop                 - sets motor driver to off, with braking (motor terminals shorted)
     coast                - sets motor driver to off, no braking   (motor terminals open)
     """ 
-    split_string = input_string.split()
     try:
-        command = split_string[0].lower()
-        if command == "throttle":
-            result = float(split_string[1])
+        command = input_string.lower()
+        if command in ["off", "stop", "0"]:
+            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both outputs on: which shorts them on motor driver
+        elif command in ["coast", None]:
+            return None # sets motor to coast
+        else:
+            result = float(input_string)
             if result >  1.0: result =  1.0
             if result < -1.0: result = -1.0
             return result
-        elif command in ["off", "stop", "0"]:
-            return 0    # adafruit_motor.Motor class handles a throttle value of 0 as both outputs on: which shorts them on motor driver
-        else: # implicitly handle coast case
-            return None # adafruit_motor.Motor class handles a throttle value of None as both outputs off.
+
     except:
         print("Invalid command. Accepted commands are:\nthrottle [-1.0 to 1.0]\nstop\n\ncommand received was: *{:s}*".format(input_string))
         return None

@@ -13,7 +13,7 @@ from adafruit_motor import motor
 motor_cpr = int(48) # 48 counts per revolution
 encoder_pinA = board.GP16
 encoder_pinB = board.GP17 # unused in code- just here to clarify pin is claimed
-loop_rate = 10000
+loop_rate = 250
 sleep_seconds = 1/loop_rate # only compute this once instead of every loop
 filter_alpha = 0.3 # low pass filter for RPM
 

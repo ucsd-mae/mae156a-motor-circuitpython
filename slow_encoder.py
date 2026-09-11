@@ -12,7 +12,7 @@ encoder_pinA = board.GP16
 encoder_pinB = board.GP17 
 loop_rate = 10
 sleep_seconds = 1/loop_rate # only compute this once
-filter_alpha = 0.1
+
 
 
 # Initialize Pin 1
@@ -25,11 +25,7 @@ encoderB.switch_to_input(pull=digitalio.Pull.UP)
 
 encoder_count = 0
 encoder_count_prev = 0
-filtered_rpm = 0
 
-def rolling_ema_filter(alpha, raw_val, filtered_val):
-    # simple filter: https://en.wikipedia.org/wiki/Exponential_smoothing
-    return alpha * raw_val + (1 - alpha) * filtered_val
 
 # store state of pins as binary value 0b(pinA)(pinB)
 # so if pinA is high (1) and pin B is low, value is 0b10
@@ -55,21 +51,12 @@ while True:
         # update previous encoder state with new state
         encoder_state_prev = encoder_state_new
 
-        # get current time
-        new_time = time.monotonic()
-    
-        if True:
-            delta_count = encoder_count - encoder_count_prev
-            delta_time =  new_time - last_time 
-            rpm = delta_count / motor_cpr / delta_time * 60
-            filtered_rpm = rolling_ema_filter(filter_alpha, rpm, filtered_rpm)
-            print("systime {:6f}, encoder count {:6d}, delta encoder {:6d}, delta t(s) {:.6f}\t".format(new_time,
-                                                                                                encoder_count, 
-                                                                                                delta_count, 
-                                                                                                delta_time), 
-                                                                                                )
-#             print("raw rpm {:.0f}, filtered rpm {:.0f}".format(rpm,
-#                                                                filtered_rpm))
-            encoder_count_prev = encoder_count
-            last_time = new_time
-        time.sleep(sleep_seconds) # enforce the loop rate from constants
+    # get current time
+    new_time = time.monotonic()
+    print("systime {:6f}, encoder count {:6d}".format(new_time,
+                                                    encoder_count, 
+                                                    ), 
+                                                    )
+    encoder_count_prev = encoder_count
+    last_time = new_time
+    time.sleep(sleep_seconds) # enforce the loop rate from constants

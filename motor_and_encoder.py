@@ -31,9 +31,6 @@ M1B = pwmio.PWMOut(motor1_pwmB, frequency=10000) # this pin is used to set PWM s
 # create motor object with PWM objects
 motor1 = motor.DCMotor(M1A, M1B)
 
-def rolling_ema_filter(alpha, raw_val, filtered_val):
-    # simple filter: https://en.wikipedia.org/wiki/Exponential_smoothing
-    return alpha * raw_val + (1 - alpha) * filtered_val
 
 def parse_user_input(input_string):
     """
@@ -63,9 +60,12 @@ def parse_user_input(input_string):
 # initialize state of some objects, similar to "setup" function in arduino
 last_value = encoder.count()
 last_time = time.monotonic_ns()
-filtered_rpm = 0
 
 print("Basic encoder reading, loop rate: {:d}".format(loop_rate))
+print("To run motor, send throttle command between -1 and 1.")
+print("\n example:\n> -1        # sets throttle to 100% reverse")
+print("> -0.5      # sets throttle to 50% reverse")
+print(">  1.0      # sets throttle to 100% forward")
 
 # equivalent to "loop" in Arduino  
 while True:
@@ -73,18 +73,14 @@ while True:
     new_value = encoder.count()
     delta_count = new_value - last_value
     delta_time = new_time - last_time 
-    rpm = delta_count / motor_cpr / delta_time * 60e9
-    filtered_rpm = rolling_ema_filter(filter_alpha, rpm, filtered_rpm)
 
     if new_value != last_value:
-        print("systime {:5.5f}, throttle {:s}, encoder count {:8d}, delta encoder {:3d}, delta t(s) {:1.7f}, raw rpm {:4.0f}, filtered rpm {:4.0f}"\
+        print("systime {:5.5f}, throttle {:s}, encoder count {:8d}"
               .format(time.monotonic(),
-                        str(motor1.throttle),
-                        new_value, 
-                        delta_count, 
-                        delta_time/1e9, 
-                        rpm,
-                        filtered_rpm))
+                      str(motor1.throttle),
+                      new_value
+                      )
+              )
         last_value = new_value
         last_time = new_time
 
